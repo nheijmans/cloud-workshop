@@ -1,0 +1,35 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: 'AWS::Serverless-2016-10-31'
+Description: Template example
+Globals:
+  Function:
+    Timeout: 30
+
+Parameters:
+  SamplesBucket:
+    Type: String
+    Default: default-bucket
+    Description: Name of the bucket to store data
+  
+Resources:
+  #================ FUNCTIONS ==================
+  MyFirstFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: first_function/
+      Handler: main.lambda_handler
+      Runtime: python3.7
+      Policies:
+        - S3CrudPolicy:
+            BucketName: !Ref SamplesBucket 
+      Environment: 
+        Variables:
+          Bucket: !Ref SamplesBucket
+      Events:
+        SubmitExecutable:
+          Type: Api
+          Properties:
+            Path: /submit/data
+            Method: post
+      Tags:
+        project: CloudWorkshop
